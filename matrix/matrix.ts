@@ -1,13 +1,23 @@
+type TwoDimensionalArray<T> = readonly (readonly T[])[]
+
 export class Matrix {
-  constructor() {
-    throw new Error('Remove this line and implement the function')
+  readonly #rows: TwoDimensionalArray<number>
+  constructor(source: string) {
+    this.#rows = source
+      .split('\n')
+      .map((rowSource) => rowSource.split(' '))
+      .map((row) => row.map(Number))
   }
 
-  get rows(): unknown {
-    throw new Error('Remove this line and implement the function')
+  get rows(): TwoDimensionalArray<number> {
+    return this.#rows
   }
 
-  get columns(): unknown {
-    throw new Error('Remove this line and implement the function')
+  get columns(): TwoDimensionalArray<number> {
+    return this.#rows.reduce<TwoDimensionalArray<number>>(
+      (columns, row) =>
+        row.map((element, index) => [...(columns[index] ?? []), element]),
+      [],
+    )
   }
 }
