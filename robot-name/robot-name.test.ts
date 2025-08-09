@@ -1,4 +1,4 @@
-import { beforeEach, afterEach, describe, it, expect, xit } from '@jest/globals'
+import { afterEach, beforeEach, describe, expect, it } from '@jest/globals'
 import { Robot } from './robot-name.ts'
 
 const areSequential = (name1: string, name2: string): boolean => {
@@ -40,16 +40,16 @@ describe('Robot', () => {
     expect(robot.name).toMatch(NAME_RE)
   })
 
-  xit('name is the same each time', () => {
+  it('name is the same each time', () => {
     expect(robot.name).toEqual(robot.name)
   })
 
-  xit('different robots have different names', () => {
+  it('different robots have different names', () => {
     const differentRobot = new Robot()
     expect(differentRobot.name).not.toEqual(robot.name)
   })
 
-  xit('is able to reset the name', () => {
+  it('is able to reset the name', () => {
     const originalName = robot.name
 
     robot.resetName()
@@ -59,7 +59,7 @@ describe('Robot', () => {
     expect(originalName).not.toEqual(newName)
   })
 
-  xit('should set a unique name after reset', () => {
+  it('should set a unique name after reset', () => {
     const NUMBER_OF_ROBOTS = 10000
     const usedNames = new Set()
 
@@ -72,7 +72,7 @@ describe('Robot', () => {
     expect(usedNames.size).toEqual(NUMBER_OF_ROBOTS + 1)
   })
 
-  xit('new names should not be sequential', () => {
+  it('new names should not be sequential', () => {
     const name1 = robot.name
     const name2 = new Robot().name
     const name3 = new Robot().name
@@ -81,7 +81,7 @@ describe('Robot', () => {
     expect(areSequential(name2, name3)).toBe(false)
   })
 
-  xit('names from reset should not be sequential', () => {
+  it('names from reset should not be sequential', () => {
     const name1 = robot.name
     robot.resetName()
     const name2 = robot.name
@@ -92,7 +92,7 @@ describe('Robot', () => {
     expect(areSequential(name3, name3)).toBe(true)
   })
 
-  xit('uses all letters', () => {
+  it('uses all letters', () => {
     let letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
     for (let i = 0; i < 1000 - 1; i += 1) {
@@ -108,7 +108,7 @@ describe('Robot', () => {
     expect(letters).toEqual('')
   })
 
-  xit('uses all numbers', () => {
+  it('uses all numbers', () => {
     let numbers = '0123456789'
 
     for (let i = 0; i < 1000 - 1; i += 1) {
@@ -129,7 +129,7 @@ describe('Robot', () => {
   //
   // This test doesn't run on our online test runner because it will time-out
   // with most implementations. It's up to you to test your solution locally.
-  it.skip('all the names can be generated', () => {
+  it('all the names can be generated', () => {
     const usedNames = new Set()
     usedNames.add(robot.name)
 
