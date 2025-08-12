@@ -1,9 +1,13 @@
 export class Clock {
   /** This is always less than `minutesPerDay`. */
-  #minuteWithinDay = 0n
+  #minuteWithinDay
 
-  constructor(hours: number, minutes: number = 0) {
-    this.plus(hours * Number(minutesPerHour) + minutes)
+  constructor(hour: number, minute: number = 0) {
+    const minutesIncludingHours = BigInt(hour * Number(minutesPerHour) + minute)
+    this.#minuteWithinDay =
+      minutesIncludingHours < 0
+        ? (minutesIncludingHours % minutesPerDay) + minutesPerDay
+        : minutesIncludingHours % minutesPerDay
   }
 
   public toString(): string {
@@ -18,19 +22,11 @@ export class Clock {
   }
 
   public plus(minutes: number): Clock {
-    const minutesToAdd =
-      minutes < 0
-        ? (BigInt(minutes) % minutesPerDay) + minutesPerDay
-        : BigInt(minutes)
-
-    this.#minuteWithinDay =
-      (this.#minuteWithinDay + minutesToAdd) % minutesPerDay
-
-    return this
+    return new Clock(0, Number(this.#minuteWithinDay) + minutes)
   }
 
   public minus(minutes: number): Clock {
-    return this.plus(-minutes)
+    return new Clock(0, Number(this.#minuteWithinDay) - minutes)
   }
 
   public equals(other: Clock): boolean {
