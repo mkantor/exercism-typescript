@@ -6,60 +6,50 @@ type Node<T> = {
 
 export class LinkedList<T> {
   #last: Node<T> | undefined
-
-  #getFirst(): Node<T> | undefined {
-    if (this.#last === undefined) {
-      return undefined
-    } else {
-      let firstNode = this.#last
-      while (firstNode.previous !== undefined) {
-        firstNode = firstNode.previous
-      }
-      return firstNode
-    }
-  }
+  #first: Node<T> | undefined
 
   public push(element: T): void {
     const node = { element, previous: this.#last }
     if (this.#last === undefined) {
-      this.#last = node
+      this.#first = node
     } else {
       this.#last.next = node
-      this.#last = this.#last.next
     }
+    this.#last = node
   }
 
   public pop(): T | undefined {
     const poppedNode = this.#last
     this.#last = this.#last?.previous
+    if (this.#last === undefined) {
+      this.#first = undefined
+    }
     return poppedNode?.element
   }
 
   public shift(): T | undefined {
-    const shiftedNode = this.#getFirst()
-    if (shiftedNode?.next !== undefined) {
-      shiftedNode.next.previous = undefined
-    }
-    if (shiftedNode === this.#last) {
+    const shiftedNode = this.#first
+    this.#first = this.#first?.next
+    if (this.#first === undefined) {
       this.#last = undefined
     }
     return shiftedNode?.element
   }
 
   public unshift(element: T): void {
-    const first = this.#getFirst()
-    if (first === undefined) {
-      this.#last = { element }
+    const node = { element, next: this.#first }
+    if (this.#first === undefined) {
+      this.#last = node
     } else {
-      const node = { next: first, element }
-      first.previous = node
+      this.#first.previous = node
     }
+    this.#first = node
   }
 
-  /** Deletes all nodes with the given element value (as determined by `===`). */
-  // The tests aren't very precise about how `delete` should behave.
+  /** Deletes all nodes with the given element value. */
+  // The tests aren't precise about how `delete` should behave.
   public delete(element: T): void {
-    let node: Node<T> | undefined = this.#last
+    let node: Node<T> | undefined = this.#first
     while (node !== undefined) {
       if (node.element === element) {
         if (node.previous !== undefined) {
@@ -68,20 +58,23 @@ export class LinkedList<T> {
         if (node.next !== undefined) {
           node.next.previous = node.previous
         }
+        if (node === this.#first) {
+          this.#first = node.next
+        }
         if (node === this.#last) {
           this.#last = node.previous
         }
       }
-      node = node.previous
+      node = node.next
     }
   }
 
   public count(): unknown {
     let count = 0
-    let node: Node<T> | undefined = this.#last
+    let node: Node<T> | undefined = this.#first
     while (node !== undefined) {
       count++
-      node = node.previous
+      node = node.next
     }
     return count
   }
