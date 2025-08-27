@@ -1,22 +1,16 @@
 export function toRna(dna: string): string {
-  let rna = ''
-  for (const dnaNucleotide of dna) {
-    switch (dnaNucleotide) {
+  return dna.replace(/./g, (nucleotide) => {
+    switch (nucleotide) {
       case 'G':
-        rna += 'C'
-        break
+        return 'C'
       case 'C':
-        rna += 'G'
-        break
+        return 'G'
       case 'T':
-        rna += 'A'
-        break
+        return 'A'
       case 'A':
-        rna += 'U'
-        break
+        return 'U'
       default:
         throw new Error('Invalid input DNA.')
     }
-  }
-  return rna
+  })
 }
