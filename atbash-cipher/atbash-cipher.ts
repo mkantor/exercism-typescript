@@ -6,61 +6,33 @@ export function decode(cipherText: string): string {
   return transcode(cipherText)
 }
 
-const mapping: Record<string, string> = {
-  a: 'z',
-  b: 'y',
-  c: 'x',
-  d: 'w',
-  e: 'v',
-  f: 'u',
-  g: 't',
-  h: 's',
-  i: 'r',
-  j: 'q',
-  k: 'p',
-  l: 'o',
-  m: 'n',
-  n: 'm',
-  o: 'l',
-  p: 'k',
-  q: 'j',
-  r: 'i',
-  s: 'h',
-  t: 'g',
-  u: 'f',
-  v: 'e',
-  w: 'd',
-  x: 'c',
-  y: 'b',
-  z: 'a',
-  0: '0',
-  1: '1',
-  2: '2',
-  3: '3',
-  4: '4',
-  5: '5',
-  6: '6',
-  7: '7',
-  8: '8',
-  9: '9',
-}
+const letters = [...'abcdefghijklmnopqrstuvwxyz']
+const digits = [...'0123456789']
+const mapping: Record<string, string> = Object.fromEntries(
+  letters
+    .flatMap((letter, index) => {
+      // Letters map to the corresponding letter in a reversed alphabet (a → z, b → y, etc):
+      const output = letters[letters.length - index - 1]
+      return [
+        [letter, output],
+        [letter.toUpperCase(), output], // Uppercase letters map to lowercase outputs.
+      ]
+    })
+    .concat(digits.map((digit) => [digit, digit])), // Digits are preserved.
+)
 
-function transcode(text: string, groupSize = Infinity): string {
+function transcode(text: string, groupLength = Infinity): string {
   let output = ''
-  let charactersInCurrentGroup = 0
+  let currentGroupLength = 0
   for (const character of text) {
-    const normalizedCharacter = character.toLowerCase()
-    if (normalizedCharacter in mapping) {
-      const transcodedCharacter = mapping[normalizedCharacter]
-      if (
-        charactersInCurrentGroup !== 0 &&
-        charactersInCurrentGroup % groupSize === 0
-      ) {
+    const transcodedCharacter = mapping[character]
+    if (transcodedCharacter !== undefined) {
+      if (currentGroupLength !== 0 && currentGroupLength % groupLength === 0) {
         output += ` ${transcodedCharacter}`
-        charactersInCurrentGroup = 1
+        currentGroupLength = 1
       } else {
         output += transcodedCharacter
-        charactersInCurrentGroup += 1
+        currentGroupLength += 1
       }
     }
   }
